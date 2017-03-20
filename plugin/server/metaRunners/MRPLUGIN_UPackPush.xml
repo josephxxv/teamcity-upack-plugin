@@ -16,7 +16,7 @@
                    spec="text description='Path of the .upack file to publish. You may use PowerShell wildcards - this will run through Get-ChildItem to locate all packages to publish.' label='Package' validationMode='not_empty' display='normal'" />
             <param name="teamcity.tool.upack.target"
                    value=""
-                   spec="text description='URL of the Universal Feed to which the package(s) should be published.' regexp='http(s)://.+' label='Target' validationMode='regex' display='normal' validationMessage='UPack feed URL must include the protocol (http/https).'" />
+                   spec="text description='URL of the Universal Feed to which the package(s) should be published.' regexp='https?://.+' label='Target' validationMode='regex' display='normal' validationMessage='UPack feed URL must include the protocol (http/https).'" />
             <param name="teamcity.tool.upack.authentication"
                    value=""
                    spec="password description='User name and password to use for servers that require authentication. Example: username:password' label='Authentication' display='normal'" />
