@@ -59,6 +59,10 @@ try
         $commandToExecute = "& $upackPath$upackArgs"
         $result = Invoke-Expression $commandToExecute
         Write-Host $result
+
+        if ($LASTEXITCODE -ne 0){
+            [System.Environment]::Exit(1)
+        }
     }
 }
 catch
