@@ -2,7 +2,8 @@
 <!--
     https://inedo.com/support/documentation/various/universal-packages/upack-reference
 
-    upack push <package> <target> [==user<authentication>]
+    upack push <package> <target>
+        [==user<authentication>]
 
         package - Path of a valid .upack file.
         target - URL of a upack API endpoint.
