@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    https://inedo.com/support/documentation/proget/reference/upack
+    https://inedo.com/support/documentation/various/universal-packages/upack-reference
 
-    upack install «package» \-\-source=«source» \-\-target=«target» [\-\-user=«user»] 
-        package - Path of a valid .upack file.
+    upack install <package> [<version>] ==source=<source> ==target=<target>
+        [==user=<user>] [==comment=<comment>] [==overwrite] [==prerelease]
+        [==userregistry] [==unregistered] [==cache]
+
+        package - Package name and group, such as group/name.
+        version - Package version. If not specified, the latest version is retrieved.
         source - URL of a upack API endpoint.
         target - Directory where the contents of the package will be extracted.
         user - User name and password to use for servers that require authentication. Example: username:password
+        overwrite - When specified, Overwrite files in the target directory.
+        prerelease - When version is not specified, will install the latest prerelase version instead of the latest stable version.
+        comment - The reason for installing the package, for the local registry.
+        userregistry - Register the package in the user registry instead of the machine registry.
+        unregistered - Do not register the package in a local registry.
+        cache - Cache the contents of the package in the local registry.
 -->
 <meta-runner name="UPack Install">
     <description>Run UPack Install to install a ProGet Universal Feed package to the build working directory.</description>
@@ -17,7 +27,7 @@
                    spec="text description='Package name and group, such as group/name.' label='Package' validationMode='not_empty' display='normal'" />
             <param name="teamcity.tool.upack.source"
                    value=""
-                   spec="text description='URL of a upack API endpoint.' label='Source' regexp='https?://.+' validationMode='regex' display='normal' validationMessage='UPack feed URL must include the protocol (http/https).'" />
+                   spec="text description='URL of the Universal Feed from which the package will be retrieved.' label='Source' regexp='https?://.+' validationMode='regex' display='normal' validationMessage='UPack feed URL must include the protocol (http/https).'" />
             <param name="teamcity.tool.upack.target"
                    value=""
                    spec="text description='Directory where the contents of the package will be extracted.' label='Target' validationMode='not_empty' display='normal'" />
@@ -26,15 +36,23 @@
                    spec="password description='User name and password to use for servers that require authentication. Example: username:password' label='Authentication' display='normal'" />
         </parameters>
         <build-runners>
-            <runner name="UPack Install" type="jetbrains_powershell">
+            <runner name="UPack Install"
+                    type="jetbrains_powershell">
                 <parameters>
-                    <param name="jetbrains_powershell_execution" value="PS1" />
-                    <param name="jetbrains_powershell_noprofile" value="true" />
-                    <param name="jetbrains_powershell_errorToError" value="error" />
-                    <param name="jetbrains_powershell_script_mode" value="CODE" />
-                    <param name="jetbrains_powershell_bitness" value="x86" />
-                    <param name="jetbrains_powershell_minVersion" value="3.0" />
-                    <param name="teamcity.step.mode" value="default" />
+                    <param name="jetbrains_powershell_execution"
+                           value="PS1" />
+                    <param name="jetbrains_powershell_noprofile"
+                           value="true" />
+                    <param name="jetbrains_powershell_errorToError"
+                           value="error" />
+                    <param name="jetbrains_powershell_script_mode"
+                           value="CODE" />
+                    <param name="jetbrains_powershell_bitness"
+                           value="x86" />
+                    <param name="jetbrains_powershell_minVersion"
+                           value="3.0" />
+                    <param name="teamcity.step.mode"
+                           value="default" />
                     <param name="jetbrains_powershell_script_code">
                         <![CDATA[
 $upackPath = "`"%teamcity.agent.tools.dir%\upack-metarunner\bin\upack.exe`"";
@@ -58,7 +76,7 @@ try
     if ($LASTEXITCODE -ne 0){
         [System.Environment]::Exit(1)
     }
-    
+
 }
 catch
 {
