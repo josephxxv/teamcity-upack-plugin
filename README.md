@@ -1,6 +1,6 @@
 # ProGet UPack Plugin for TeamCity
 
-This plugin adds support to run [UPack](https://inedo.com/support/documentation/proget/reference/upack) to work with Inedo ProGet Universal Feeds from within TeamCity.
+This plugin adds support to run [UPack](https://inedo.com/support/documentation/various/universal-packages/upack-reference) to work with Inedo ProGet Universal Feeds from within TeamCity.
 
 ## Installation
 
