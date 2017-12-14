@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    https://inedo.com/support/documentation/proget/reference/upack
+
+    upack install «package» \-\-source=«source» \-\-target=«target» [\-\-user=«user»] 
+        package - Path of a valid .upack file.
+        source - URL of a upack API endpoint.
+        target - Directory where the contents of the package will be extracted.
+        user - User name and password to use for servers that require authentication. Example: username:password
+-->
+<meta-runner name="UPack Install">
+    <description>Run UPack Install to install a ProGet Universal Feed package to the build working directory.</description>
+    <settings>
+        <parameters>
+            <param name="teamcity.tool.upack.package"
+                   value=""
+                   spec="text description='Package name and group, such as group/name.' label='Package' validationMode='not_empty' display='normal'" />
+            <param name="teamcity.tool.upack.source"
+                   value=""
+                   spec="text description='URL of a upack API endpoint.' label='Source' regexp='https?://.+' validationMode='regex' display='normal' validationMessage='UPack feed URL must include the protocol (http/https).'" />
+            <param name="teamcity.tool.upack.target"
+                   value=""
+                   spec="text description='Directory where the contents of the package will be extracted.' label='Target' validationMode='not_empty' display='normal'" />
+            <param name="teamcity.tool.upack.authentication"
+                   value=""
+                   spec="password description='User name and password to use for servers that require authentication. Example: username:password' label='Authentication' display='normal'" />
+        </parameters>
+        <build-runners>
+            <runner name="UPack Install" type="jetbrains_powershell">
+                <parameters>
+                    <param name="jetbrains_powershell_execution" value="PS1" />
+                    <param name="jetbrains_powershell_noprofile" value="true" />
+                    <param name="jetbrains_powershell_errorToError" value="error" />
+                    <param name="jetbrains_powershell_script_mode" value="CODE" />
+                    <param name="jetbrains_powershell_bitness" value="x86" />
+                    <param name="jetbrains_powershell_minVersion" value="3.0" />
+                    <param name="teamcity.step.mode" value="default" />
+                    <param name="jetbrains_powershell_script_code">
+                        <![CDATA[
+$upackPath = "`"%teamcity.agent.tools.dir%\upack-metarunner\bin\upack.exe`"";
+
+try
+{
+    $package = '%teamcity.tool.upack.package%'
+    $target = '%teamcity.tool.upack.target%'
+    $authentication = '%teamcity.tool.upack.authentication%'
+    $source = '%teamcity.tool.upack.source%'
+
+    $upackArgs = " install `"$package`" --target=`"$target`" --source=`"$source`"";
+    if (![String]::IsNullOrEmpty($authentication)){
+        $upackArgs += " --user=`"$authentication`""
+    }
+
+    $commandToExecute = "& $upackPath$upackArgs"
+    $result = Invoke-Expression $commandToExecute
+    Write-Host $result
+
+    if ($LASTEXITCODE -ne 0){
+        [System.Environment]::Exit(1)
+    }
+    
+}
+catch
+{
+    Write-Error $_
+    [System.Environment]::Exit(1)
+}
+            ]]>
+</param>
+                </parameters>
+            </runner>
+        </build-runners>
+        <requirements />
+    </settings>
+</meta-runner>
