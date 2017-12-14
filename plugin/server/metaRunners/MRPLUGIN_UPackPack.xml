@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    https://inedo.com/support/documentation/proget/reference/upack
+
+   upack pack <source> 
+        [==targetDirectory=<targetDirectory>]
+        [==group=<group>] 
+        [==name=<name>]
+        [==version=<version>]
+        [==title=<title>] 
+        [==description=<description>]
+        [==icon=<icon>]
+
+        source - Directory containing files to add to the package.        
+        targetDirectory - Directory where the .upack file will be created. If not specified, the current working directory is used. (optional)
+        group - Package group. 
+        name - Package name. 
+        version - Package version. 
+        title - Package title. (optional)
+        description - Package description. (optional)
+        icon - Icon absolute Url.  (optional)
+-->
+<meta-runner name="UPack Pack">
+    <description>Run UPack Pack to create a ProGet Universal Feed package.</description>
+    <settings>
+        <parameters>
+            <param name="teamcity.tool.upack.source"
+                   value=""
+                   spec="text description='Directory containing files to add to the package.' label='Source' validationMode='not_empty' display='normal'" />
+            <param name="teamcity.tool.upack.targetDirectory"
+                   value=""
+                   spec="text description='Directory where the .upack file will be created. If not specified, the current working directory is used.' label='Target Directory' validationMode='any' display='normal'" />
+            <param name="teamcity.tool.upack.group"
+                   value=""
+                   spec="text description='Package group.' label='Group' validationMode='not_empty' display='normal'" />
+            <param name="teamcity.tool.upack.name"
+                   value=""
+                   spec="text description='Package name.' label='Package Name' validationMode='not_empty' display='normal'" />
+            <param name="teamcity.tool.upack.title"
+                   value=""
+                   spec="text description='Package title. (optional)' label='Pacakge Title' validationMode='any' display='normal'" />
+            <param name="teamcity.tool.upack.description"
+                   value=""
+                   spec="text description='Package description. (optional)' label='Package Description' validationMode='any' display='normal'" />
+            <param name="teamcity.tool.upack.version"
+                   value=""
+                   spec="text description='Package semantic version.' label='Version' validationMode='not_empty' display='normal' " />
+            <param name="teamcity.tool.upack.icon"
+                   value=""
+                   spec="text description='Icon absolute Url. (optional)' label='Icon URL' validationMode='any' display='normal'" />
+
+        </parameters>
+        <build-runners>
+            <runner name="UPack Pack"
+                    type="jetbrains_powershell">
+                <parameters>
+                    <param name="jetbrains_powershell_execution"
+                           value="PS1" />
+                    <param name="jetbrains_powershell_noprofile"
+                           value="true" />
+                    <param name="jetbrains_powershell_errorToError"
+                           value="error" />
+                    <param name="jetbrains_powershell_script_mode"
+                           value="CODE" />
+                    <param name="jetbrains_powershell_bitness"
+                           value="x86" />
+                    <param name="jetbrains_powershell_minVersion"
+                           value="3.0" />
+                    <param name="teamcity.step.mode"
+                           value="default" />
+                    <param name="jetbrains_powershell_script_code">
+                        <![CDATA[
+$upackPath = "`"%teamcity.agent.tools.dir%\upack-metarunner\bin\upack.exe`"";
+
+try
+{
+    $source = '%teamcity.tool.upack.source%'
+    $targetDirectory = '%teamcity.tool.upack.targetDirectory%'
+    $group = '%teamcity.tool.upack.group%'
+    $name = '%teamcity.tool.upack.name%'
+    $title = '%teamcity.tool.upack.title%'
+    $description = '%teamcity.tool.upack.description%'
+    $version = '%teamcity.tool.upack.version%'
+    $icon = '%teamcity.tool.upack.icon%'
+
+    New-Item -ItemType Directory -Force -Path "$targetDirectory"
+    
+    $upackArgs = " pack `"$source`" --group=$group --name=$name --version=$version";
+    if (![String]::IsNullOrEmpty($description)){
+        $upackArgs += " --description=`"$description`""
+    }
+    if (![String]::IsNullOrEmpty($targetDirectory)){
+        $upackArgs += " --targetDirectory=`"$targetDirectory`""
+    }
+    if (![String]::IsNullOrEmpty($title)){
+        $upackArgs += " --title=`"$title`""
+    }
+    if (![String]::IsNullOrEmpty($icon)){
+        $upackArgs += " --icon=`"$icon`""
+    }
+
+    $commandToExecute = "& $upackPath$upackArgs"
+    $result = Invoke-Expression $commandToExecute
+    Write-Host $result
+
+    if ($LASTEXITCODE -ne 0){
+        [System.Environment]::Exit(1)
+    }
+    
+}
+catch
+{
+    Write-Error $_
+    [System.Environment]::Exit(1)
+}
+            ]]>
+                    </param>
+                </parameters>
+            </runner>
+        </build-runners>
+        <requirements />
+    </settings>
+</meta-runner>
