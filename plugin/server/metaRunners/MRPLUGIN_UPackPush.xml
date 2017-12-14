@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    https://inedo.com/support/documentation/proget/reference/upack
+    https://inedo.com/support/documentation/various/universal-packages/upack-reference
 
-    upack push <package> <target> [==user=<authentication>]
+    upack push <package> <target> [==user<authentication>]
+
         package - Path of a valid .upack file.
         target - URL of a upack API endpoint.
-        authentication - User name and password to use for servers that require authentication. Example: username:password
+        user - User name and password to use for servers that require authentication. Example: username:password
 -->
 <meta-runner name="UPack Push">
     <description>Run UPack Push to publish a ProGet Universal Feed package.</description>
