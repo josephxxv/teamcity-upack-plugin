@@ -3,8 +3,13 @@
     https://inedo.com/support/documentation/various/universal-packages/upack-reference
 
     upack install <package> [<version>] ==source=<source> ==target=<target>
-        [==user=<user>] [==comment=<comment>] [==overwrite] [==prerelease]
-        [==userregistry] [==unregistered] [==cache]
+        [==user=<user>]
+        [==comment=<comment>]
+        [==overwrite]
+        [==prerelease]
+        [==userregistry]
+        [==unregistered]
+        [==cache]
 
         package - Package name and group, such as group/name.
         version - Package version. If not specified, the latest version is retrieved.
@@ -60,11 +65,11 @@ $upackPath = "`"%teamcity.agent.tools.dir%\upack-metarunner\bin\upack.exe`"";
 try
 {
     $package = '%teamcity.tool.upack.package%'
+    $source = '%teamcity.tool.upack.source%'
     $target = '%teamcity.tool.upack.target%'
     $authentication = '%teamcity.tool.upack.authentication%'
-    $source = '%teamcity.tool.upack.source%'
 
-    $upackArgs = " install `"$package`" --target=`"$target`" --source=`"$source`"";
+    $upackArgs = " install `"$package`" --source=`"$source`" --target=`"$target`"";
     if (![String]::IsNullOrEmpty($authentication)){
         $upackArgs += " --user=`"$authentication`""
     }
